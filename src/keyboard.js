@@ -27,7 +27,7 @@ export default class KeyboardCreator {
         note.className = 'note';       
         note.innerHTML = 'Press Ctrl + Alt for change language';
         divContainer.append(note);
-        divContainer.onclick = this.buttonHandler.bind(this);
+        divContainer.onclick = this.buttonHandler.bind(this);        
         return divContainer;
     }
 
@@ -73,11 +73,17 @@ export default class KeyboardCreator {
         }
         button.innerHTML = btnInfo.small;
 
-        button.addEventListener ('mousedown', () => {
+        button.addEventListener ('mousedown', (event) => {            
+            if (button.innerHTML === 'Shift') {
+                this.shiftHendlerOn(event);
+            }
             button.classList.add('onFocus');
         })
 
-        button.addEventListener ('mouseup', () => {
+        button.addEventListener ('mouseup', (event) => {
+            if (button.innerHTML === 'Shift') {
+                this.shiftHendlerOff(event);
+            }
             button.classList.remove('onFocus');
         })
 
@@ -124,7 +130,7 @@ export default class KeyboardCreator {
         } else if (currentElem.hasAttribute('delete')) {            
             textarea.value = value.substring(0,pointer) + value.substring(pointer + 1); 
             textarea.selectionEnd = pointer;
-        } else if (currentElem.hasAttribute('capslock')) {
+        } else if (currentElem.hasAttribute('capslock')) {            
             this.capsHendler(event);
         }
     }
@@ -137,9 +143,11 @@ export default class KeyboardCreator {
             for (let j = 0; j< this.currLang[i].length; j++){
                 const btn = this.arrButtons.get(this.currLang[i][j].keyCode);
                 if (this.isLowerCase) {
-                btn.innerHTML = this.currLang[i][j].upper;   
+                    btn.innerHTML = this.currLang[i][j].upper;   
+                    document.getElementById('CapsLock').classList.add('onFocus');
                 } else {  
-                btn.innerHTML = this.currLang[i][j].small;
+                    btn.innerHTML = this.currLang[i][j].small;
+                    document.getElementById('CapsLock').classList.remove('onFocus');
                 }
             }
         }
