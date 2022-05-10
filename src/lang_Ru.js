@@ -336,6 +336,6 @@ export let ru =
     keyCode: 'ControlRight',
     small: 'Ctrl',
     upper: 'Ctrl',    
-    specialClass: 'special',
+    specialClass: 'key-special',
   }]
 ];

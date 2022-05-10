@@ -105,20 +105,23 @@ export default class KeyboardCreator {
     }
 
     buttonSpecialHandler (currentElem, event) {        
+        const textarea = document.querySelector('textarea'); 
+        let pointer = textarea.selectionStart;
+        const value = textarea.value;
+
         if (currentElem.hasAttribute('enter')) {
             document.querySelector('textarea').value += '\n';
         } else if (currentElem.hasAttribute('backspace')) {
-            document.querySelector('textarea').value = document.querySelector('textarea').value.slice(0, -1); 
+            document.querySelector('textarea').value = value.substring(0,pointer - 1) + value.substring(pointer); 
+            textarea.selectionEnd = pointer - 1;
+            console.log(value.substring(0,pointer + 1))
         } else if (currentElem.hasAttribute('space')) {
             document.querySelector('textarea').value += ' ';
         } else if (currentElem.hasAttribute('tab')) {
             document.querySelector('textarea').value += '\t';
-        } else if (currentElem.hasAttribute('delete')) {
-            const textarea = document.querySelector('textarea'); 
-            let pointer = textarea.selectionStart;
-            console.log(textarea.selectionStart, textarea.selectionEnd, pointer + 1, pointer + 2);
-            const value = textarea.value;
-            textarea.value = value.substring(0,pointer) + value.substring(pointer + 1); //textarea.value.slice(pointer + 1, pointer + 2);
+        } else if (currentElem.hasAttribute('delete')) {            
+            textarea.value = value.substring(0,pointer) + value.substring(pointer + 1); 
+            textarea.selectionEnd = pointer;
         } else if (currentElem.hasAttribute('capslock')) {
             this.capsHendler(event);
         }
@@ -129,15 +132,13 @@ export default class KeyboardCreator {
         event.preventDefault();
         console.log('caps');
         this.isLowerCase = this.isLowerCase === false ? true : false;
-
-        
-            for (let i = 0; i< this.currLang.length; i++){
-                for (let j = 0; j< this.currLang[i].length; j++){
-                    const btn = this.arrButtons.get(this.currLang[i][j].keyCode);
-                    if (this.isLowerCase) {
-                    btn.innerHTML = this.currLang[i][j].small;   
+        for (let i = 0; i< this.currLang.length; i++){
+            for (let j = 0; j< this.currLang[i].length; j++){
+                const btn = this.arrButtons.get(this.currLang[i][j].keyCode);
+                if (this.isLowerCase) {
+                btn.innerHTML = this.currLang[i][j].upper;   
                 } else {  
-                    btn.innerHTML = this.currLang[i][j].upper;
+                btn.innerHTML = this.currLang[i][j].small;
                 }
             }
         }
