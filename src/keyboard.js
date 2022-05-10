@@ -87,6 +87,9 @@ export default class KeyboardCreator {
 
     buttonHandler (event) {
             console.log(event.target.tagName);
+            const textarea = document.querySelector('textarea'); 
+            let pointer = textarea.selectionStart;
+            const value = textarea.value;
             if (event.target.tagName === 'BUTTON'){
                 console.log(event.target.classList);                
                 const currentElemText = event.target.innerText;
@@ -94,8 +97,8 @@ export default class KeyboardCreator {
                 if (event.target.classList.contains('key-usual') || 
                     event.target.classList.contains('arrow') || 
                     event.target.classList.contains('numbers')) {
-                    document.querySelector('textarea').value += currentElemText;
-                    document.querySelector('.textarea').focus();
+                    textarea.value = value.substring(0,pointer) + currentElemText + value.substring(pointer);
+                    textarea.focus();                    
                 } else if (event.target.classList.contains('key-special') || event.target.classList.contains('space')) {
                     this.buttonSpecialHandler(currentElem, event);
                     document.querySelector('.textarea').focus();
@@ -116,7 +119,7 @@ export default class KeyboardCreator {
             textarea.selectionEnd = pointer - 1;
             console.log(value.substring(0,pointer + 1))
         } else if (currentElem.hasAttribute('space')) {
-            document.querySelector('textarea').value += ' ';
+            document.querySelector('textarea').value += ' ';            
         } else if (currentElem.hasAttribute('tab')) {
             document.querySelector('textarea').value += '\t';
         } else if (currentElem.hasAttribute('delete')) {            
@@ -140,6 +143,29 @@ export default class KeyboardCreator {
                 } else {  
                 btn.innerHTML = this.currLang[i][j].small;
                 }
+            }
+        }
+        document.querySelector('.textarea').focus();
+    }
+
+    shiftHendlerOn (event) {
+        console.log(event, 'shiftL')
+        event.preventDefault();        
+        for (let i = 0; i< this.currLang.length; i++){
+            for (let j = 0; j< this.currLang[i].length; j++){
+                const btn = this.arrButtons.get(this.currLang[i][j].keyCode);                
+                btn.innerHTML = this.currLang[i][j].upper;   
+            }
+        }
+        document.querySelector('.textarea').focus();
+    }
+    shiftHendlerOff (event) {
+        console.log(event, 'shift')
+        event.preventDefault();        
+        for (let i = 0; i< this.currLang.length; i++){
+            for (let j = 0; j< this.currLang[i].length; j++){
+                const btn = this.arrButtons.get(this.currLang[i][j].keyCode);                
+                btn.innerHTML = this.currLang[i][j].small;   
             }
         }
         document.querySelector('.textarea').focus();
@@ -169,8 +195,10 @@ export default class KeyboardCreator {
                 }                
                 document.querySelector('.textarea').focus();
 
-            }else if (document.getElementById(event.code).hasAttribute('capslock')) {
+            } else if (document.getElementById(event.code).hasAttribute('capslock')) {
                 this.capsHendler(event);
+            } else if (document.getElementById(event.code).hasAttribute('shiftleft') || document.getElementById(event.code).hasAttribute('shiftright')) {
+                this.shiftHendlerOn(event);
             }
             document.getElementById(event.code).classList.add('onFocus');
             
@@ -179,6 +207,9 @@ export default class KeyboardCreator {
             console.log(event.code);
             document.getElementById(event.code).classList.remove('onFocus');
             document.querySelector('.textarea').focus();
+            if (document.getElementById(event.code).hasAttribute('shiftleft') || document.getElementById(event.code).hasAttribute('shiftright')) {
+                this.shiftHendlerOff(event);
+            }
         })
     }
 

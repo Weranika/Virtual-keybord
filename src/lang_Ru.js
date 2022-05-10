@@ -76,7 +76,7 @@ export let ru =
     keyCode: 'Tab',
     small: 'Tab',
     upper: 'Tab',    
-    sspecialClass: 'key-special',
+    specialClass: 'key-special',
   },
   {
     keyCode: 'KeyQ',
