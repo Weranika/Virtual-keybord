@@ -4,8 +4,7 @@ import {eng} from './lang_En';
 import {ru} from './lang_Ru';
 export default class KeyboardCreator {
     constructor() {
-        this.textarea = document.querySelector('textarea');        
-        //console.log(this.textarea);
+        this.textarea = document.querySelector('textarea');          
         this.addClassActionOnPhisicalKeyboard();
         this.arrButtons = new Map();
         this.currLang = eng;
@@ -37,6 +36,9 @@ export default class KeyboardCreator {
         textarea.className = 'textarea';
         textarea.focus();
         textarea.placeholder = 'Press Ctrl + Alt for change language';
+        textarea.onblur = () => {
+            textarea.focus();
+        };
         return textarea;
     }
 
@@ -94,7 +96,8 @@ export default class KeyboardCreator {
             if (event.target.classList.contains('key-usual') || 
                 event.target.classList.contains('arrow') || 
                 event.target.classList.contains('numbers')) {
-                textarea.value = value.substring(0,pointer) + currentElemText + value.substring(pointer);
+                //textarea.value = value.substring(0,pointer) + currentElemText + value.substring(pointer);
+                textarea.setRangeText(event.target.innerText, pointer, pointer, 'end');
                 textarea.focus();                    
             } else if (event.target.classList.contains('key-special') || event.target.classList.contains('space')) {
                 this.buttonSpecialHandler(currentElem, event);
@@ -109,16 +112,15 @@ export default class KeyboardCreator {
         let pointer = textarea.selectionStart;
         const value = textarea.value;
 
-        if (currentElem.hasAttribute('enter')) {
-            document.querySelector('textarea').value += '\n';
+        if (currentElem.hasAttribute('enter')) {           
+            textarea.setRangeText('\n', pointer, pointer, 'end');
         } else if (currentElem.hasAttribute('backspace')) {
             document.querySelector('textarea').value = value.substring(0,pointer - 1) + value.substring(pointer); 
-            textarea.selectionEnd = pointer - 1;
-            //console.log(value.substring(0,pointer + 1))
+            textarea.selectionEnd = pointer - 1;            
         } else if (currentElem.hasAttribute('space')) {
-            document.querySelector('textarea').value += ' ';            
+            textarea.setRangeText(' ', pointer, pointer, 'end');                
         } else if (currentElem.hasAttribute('tab')) {
-            document.querySelector('textarea').value += '\t';
+            textarea.setRangeText('\t', pointer, pointer, 'end');            
         } else if (currentElem.hasAttribute('delete')) {            
             textarea.value = value.substring(0,pointer) + value.substring(pointer + 1); 
             textarea.selectionEnd = pointer;
