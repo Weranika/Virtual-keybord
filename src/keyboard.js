@@ -165,25 +165,29 @@ export default class KeyboardCreator {
     }
 
     addClassActionOnPhisicalKeyboard () {
+        let keysPressed = {};
         document.addEventListener('keydown', (event) => {
+            keysPressed[event.key] = true;
             if (document.getElementById(event.code).hasAttribute('tab')) {
                 event.preventDefault();
                 document.getElementById(event.code).classList.add('onFocus');
                 document.querySelector('.textarea').focus();                
                 document.querySelector('.textarea').value += '\t';
-            } else if (document.getElementById(event.code).hasAttribute('altleft')) {
+            }
+            else if (keysPressed['Control'] && event.key == 'Alt') {                
                 event.preventDefault();    
                 this.currLang = this.currLang === eng ? ru : eng;
                 const lang = this.currLang === eng ? 'eng' : 'ru';
                 localStorage.setItem('lang', lang);
-                for (let i = 0; i< this.currLang.length; i++){
+                for (let i = 0; i< this.currLang.length; i++) {
                     for (let j = 0; j< this.currLang[i].length; j++){
                         const btn = this.arrButtons.get(this.currLang[i][j].keyCode);
                         btn.innerHTML = this.currLang[i][j].small;
                     }
-                }                
-                document.querySelector('.textarea').focus();
-
+                }
+            } else if (document.getElementById(event.code).hasAttribute('altleft') || 
+                    document.getElementById(event.code).hasAttribute('altright')) {
+                event.preventDefault();   
             } else if (document.getElementById(event.code).hasAttribute('capslock')) {
                 this.capsHendler(event);
             } else if (document.getElementById(event.code).hasAttribute('shiftleft') || document.getElementById(event.code).hasAttribute('shiftright')) {
@@ -192,7 +196,9 @@ export default class KeyboardCreator {
             document.getElementById(event.code).classList.add('onFocus');
             
         });
+
         document.addEventListener('keyup', (event) => {
+            delete keysPressed[event.key];
             document.getElementById(event.code).classList.remove('onFocus');
             document.querySelector('.textarea').focus();
             if (document.getElementById(event.code).hasAttribute('shiftleft') || document.getElementById(event.code).hasAttribute('shiftright')) {
