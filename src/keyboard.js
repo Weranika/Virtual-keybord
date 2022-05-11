@@ -88,13 +88,18 @@ export default class KeyboardCreator {
 
     buttonHandler (event) {        
         const textarea = document.querySelector('textarea'); 
+        let pointer = textarea.selectionStart;
+
         if (event.target.tagName === 'BUTTON'){ 
             const currentElem = event.target;                
             if (event.target.classList.contains('key-usual') || 
                 event.target.classList.contains('arrow') || 
                 event.target.classList.contains('numbers')) {                
+                
+                textarea.setRangeText(event.target.innerText, pointer, pointer, 'end');
                 textarea.focus();                    
-            } else if (event.target.classList.contains('key-special') || event.target.classList.contains('space')) {
+            } else if ( event.target.classList.contains('key-special') || 
+                        event.target.classList.contains('space')) {
                 this.buttonSpecialHandler(currentElem, event);
                 document.querySelector('.textarea').focus();
             }                                
