@@ -4,15 +4,11 @@ import {eng} from './lang_En';
 import {ru} from './lang_Ru';
 export default class KeyboardCreator {
     constructor() {
-        this.textarea = document.querySelector('textarea');          
-        this.addClassActionOnPhisicalKeyboard();
         this.arrButtons = new Map();
         this.currLang = eng;
-        this.isLowerCase = false;
-        //console.log('local', localStorage.getItem('lang'));
+        this.isLowerCase = false;        
         if (localStorage.getItem('lang')) {
-            this.currLang = localStorage.getItem('lang') === 'eng' ? eng : ru;
-            //console.log(this.currLang, eng, ru)
+            this.currLang = localStorage.getItem('lang') === 'eng' ? eng : ru;            
         } else {
             localStorage.setItem('lang', this.currLang);
         }
@@ -90,20 +86,13 @@ export default class KeyboardCreator {
         return button;
     }    
 
-    buttonHandler (event) {
-        //console.log(event.target.tagName);
+    buttonHandler (event) {        
         const textarea = document.querySelector('textarea'); 
-        let pointer = textarea.selectionStart;
-        const value = textarea.value;
-        if (event.target.tagName === 'BUTTON'){
-            //console.log(event.target.classList);                
-            const currentElemText = event.target.innerText;
+        if (event.target.tagName === 'BUTTON'){ 
             const currentElem = event.target;                
             if (event.target.classList.contains('key-usual') || 
                 event.target.classList.contains('arrow') || 
-                event.target.classList.contains('numbers')) {
-                //textarea.value = value.substring(0,pointer) + currentElemText + value.substring(pointer);
-                textarea.setRangeText(event.target.innerText, pointer, pointer, 'end');
+                event.target.classList.contains('numbers')) {                
                 textarea.focus();                    
             } else if (event.target.classList.contains('key-special') || event.target.classList.contains('space')) {
                 this.buttonSpecialHandler(currentElem, event);
@@ -136,7 +125,6 @@ export default class KeyboardCreator {
     }
     
     capsHendler (event) {
-        //console.log(event, 'caps')
         event.preventDefault();
         this.isLowerCase = this.isLowerCase === false ? true : false;
         for (let i = 0; i< this.currLang.length; i++){
@@ -155,7 +143,6 @@ export default class KeyboardCreator {
     }
 
     shiftHendlerOn (event) {
-        //console.log(event, 'shiftL')
         event.preventDefault();        
         for (let i = 0; i< this.currLang.length; i++){
             for (let j = 0; j< this.currLang[i].length; j++){
@@ -165,8 +152,8 @@ export default class KeyboardCreator {
         }
         document.querySelector('.textarea').focus();
     }
+
     shiftHendlerOff (event) {
-        //console.log(event, 'shift')
         event.preventDefault();        
         for (let i = 0; i< this.currLang.length; i++){
             for (let j = 0; j< this.currLang[i].length; j++){
@@ -179,19 +166,16 @@ export default class KeyboardCreator {
 
     addClassActionOnPhisicalKeyboard () {
         document.addEventListener('keydown', (event) => {
-            //console.log(event.code);
             if (document.getElementById(event.code).hasAttribute('tab')) {
                 event.preventDefault();
                 document.getElementById(event.code).classList.add('onFocus');
                 document.querySelector('.textarea').focus();                
                 document.querySelector('.textarea').value += '\t';
             } else if (document.getElementById(event.code).hasAttribute('altleft')) {
-                event.preventDefault();                
-                //console.log(this.arrButtons);
+                event.preventDefault();    
                 this.currLang = this.currLang === eng ? ru : eng;
                 const lang = this.currLang === eng ? 'eng' : 'ru';
                 localStorage.setItem('lang', lang);
-                //console.log(`set local storage to ${lang}`);
                 for (let i = 0; i< this.currLang.length; i++){
                     for (let j = 0; j< this.currLang[i].length; j++){
                         const btn = this.arrButtons.get(this.currLang[i][j].keyCode);
@@ -209,7 +193,6 @@ export default class KeyboardCreator {
             
         });
         document.addEventListener('keyup', (event) => {
-            //console.log(event.code);
             document.getElementById(event.code).classList.remove('onFocus');
             document.querySelector('.textarea').focus();
             if (document.getElementById(event.code).hasAttribute('shiftleft') || document.getElementById(event.code).hasAttribute('shiftright')) {
@@ -219,6 +202,7 @@ export default class KeyboardCreator {
     }
 
     create(body) {
-        body.prepend(this.createContainer(this.currLang));        
+        body.prepend(this.createContainer(this.currLang));
+        this.addClassActionOnPhisicalKeyboard();
     }
 }
